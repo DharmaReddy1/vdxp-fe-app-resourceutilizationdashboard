@@ -1,12 +1,9 @@
 <mvc:View controllerName="capacity.dashboard.controller.Main" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:u="sap.ui.unified" displayBlock="true">
-<App><Page title="Capacity Dashboard" backgroundDesign="List" busy="{vm>/busy}" busyIndicatorDelay="0"><headerContent><Button text="Excel Template" icon="sap-icon://download" press=".onTemplate"/><Button text="Refresh Sample" icon="sap-icon://refresh" press=".onSample"/></headerContent><content>
+<App><Page title="Capacity Dashboard" backgroundDesign="List" busy="{vm>/busy}" busyIndicatorDelay="0"><content>
 <VBox class="dashboardRoot">
-<HBox wrap="Wrap" justifyContent="SpaceBetween" alignItems="Center" class="intro">
-<VBox><Title text="Daily Capacity Overview" level="H1"/><Text text="R1 support and R2.1 hypercare ? resources, workload and availability."/></VBox>
+<HBox wrap="Wrap" justifyContent="End" alignItems="Center" class="intro">
 <u:FileUploader id="upload" buttonOnly="true" buttonText="Upload Workbook" icon="sap-icon://upload" fileType="xlsx,xls" maximumFileSize="10" sameFilenameAllowed="true" change=".onUpload" fileSizeExceed=".onFileSizeExceed" typeMissmatch=".onTypeMismatch"/>
 </HBox>
-<ObjectStatus text="{vm>/source}" icon="sap-icon://document-text" state="Information" class="sapUiSmallMarginBottom"/>
-<MessageStrip text="Uploads are held in this browser tab. Reload resets to sample data; no shared database is changed." type="Information" showIcon="true" class="sapUiSmallMarginBottom"/>
 <Toolbar height="auto" class="filterToolbar"><content><HBox wrap="Wrap" alignItems="End" class="filterRow">
 <VBox><Label text="Report date" labelFor="date"/><Select id="date" selectedKey="{vm>/filters/date}" items="{vm>/dates}" change=".onFilterChange" width="11rem"><core:Item key="{vm>key}" text="{vm>text}"/></Select></VBox>
 <VBox><Label text="Process area" labelFor="area"/><Select id="area" selectedKey="{vm>/filters/area}" items="{vm>/areas}" change=".onFilterChange" width="16rem"><core:Item key="{vm>key}" text="{vm>text}"/></Select></VBox>
