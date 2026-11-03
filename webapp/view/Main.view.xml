@@ -35,7 +35,6 @@
 </cells></ColumnListItem></items>
 </Table></ScrollContainer>
 <OverflowToolbar class="sapUiSmallMarginTop"><Title text="Selected Total" level="H3"/><ToolbarSpacer/><ObjectStatus title="Resources" text="{vm>/totals/resourcesText}"/><ToolbarSeparator/><ObjectStatus title="Capacity (h)" text="{vm>/totals/capacityText}"/><ToolbarSeparator/><ObjectStatus title="Used (h)" text="{vm>/totals/usedText}"/><ToolbarSeparator/><ObjectStatus title="Available (h)" text="{vm>/totals/availableText}" state="{vm>/totals/availableState}"/><ToolbarSeparator/><ObjectStatus title="Utilization" text="{vm>/totals/utilizationText}" state="{vm>/totals/state}"/></OverflowToolbar>
-<Text text="Totals are recalculated from filtered rows. Used hours come from the workbook, not estimated ticket effort." class="chartNote sapUiSmallMarginTop"/>
 </content></Panel>
 </VBox></content></Page></App>
 </mvc:View>
