@@ -1,0 +1,11 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFileSync} from 'node:fs';
+let roster;
+vm.runInNewContext(readFileSync(new URL('../webapp/model/roster.js',import.meta.url),'utf8'),{sap:{ui:{define:(_,factory)=>{roster=factory();}}}});
+test('integration count opens the two R1 contacts',()=>{const p=roster.find('Technical - Integration','R1/R2.1');assert.equal(p.length,2);assert.ok(p.some(r=>r.name==='Pooja Solanki'));assert.ok(p.every(r=>r.emailHref.startsWith('mailto:')&&r.phoneHref.startsWith('tel:+')));});
+test('release selection includes upcoming roster without conflating headcount',()=>{assert.equal(roster.find('Technical - Integration','').length,3);assert.equal(roster.find('Technical - Integration','R2.2/R3.1').length,1);assert.equal(roster.find('MDG','R1/R2.1').length,0);assert.equal(roster.find('MDG','R2.2/R3.1').length,1);});
+test('shared contacts match only explicitly assigned modules',()=>{assert.equal(roster.find('GTS','R1/R2.1').length,1);assert.equal(roster.find('Customer Excellence','R1/R2.1').length,3);assert.equal(roster.find('Make','R1/R2.1').length,3);});
+test('TBA positions remain visible without fabricated phone or email links',()=>{const p=roster.find('Logistics','R1/R2.1').find(r=>r.id==='TBA');assert.ok(p);assert.equal(p.emailAvailable,false);assert.equal(p.contactAvailable,false);assert.equal(p.phoneHref,'');});
+test('unknown uploaded process areas show no unrelated contacts',()=>{assert.equal(roster.find('Unknown Module','').length,0);assert.equal(roster.find('Security','R1/R2.1').length,4);});

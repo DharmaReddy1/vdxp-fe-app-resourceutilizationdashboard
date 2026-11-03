@@ -1,0 +1,17 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core">
+<Dialog id="resourceDialog" title="{resources>/title}" contentWidth="70rem" contentHeight="30rem" draggable="true" resizable="true" stretchOnPhone="true">
+<content><VBox class="sapUiSmallMargin">
+<HBox wrap="Wrap" alignItems="Center" class="sapUiSmallMarginBottom"><Label text="Release" labelFor="resourceRelease" class="sapUiTinyMarginEnd"/><Select id="resourceRelease" selectedKey="{resources>/release}" change=".onResourceReleaseChange"><core:Item key="R1/R2.1" text="R1 / R2.1"/><core:Item key="R2.2/R3.1" text="R2.2 / R3.1"/><core:Item key="" text="All releases"/></Select></HBox>
+<Text text="{resources>/summary}" class="sapUiSmallMarginBottom"/>
+<MessageStrip text="Workbook counts and roster matches are independent. Shared resources can appear under more than one process area; TBA denotes an unfilled roster position." type="Information" showIcon="true" class="sapUiSmallMarginBottom"/>
+<Table items="{resources>/people}" noDataText="No active roster entries match this module and release. Try All releases." growing="true" growingThreshold="50">
+<columns><Column width="16rem"><Text text="Name"/></Column><Column minScreenWidth="Tablet" demandPopin="true"><Text text="Module / Role"/></Column><Column minScreenWidth="Tablet" demandPopin="true"><Text text="Email"/></Column><Column minScreenWidth="Tablet" demandPopin="true"><Text text="Phone Number"/></Column><Column minScreenWidth="Desktop" demandPopin="true"><Text text="Release / Allocation"/></Column></columns>
+<items><ColumnListItem><cells>
+<ObjectIdentifier title="{resources>name}" text="{resources>id}"/>
+<VBox><Text text="{resources>module}"/><Text text="{resources>role}"/></VBox>
+<VBox><Link text="{resources>email}" href="{resources>emailHref}" visible="{resources>emailAvailable}"/><Text text="Not provided" visible="{= !${resources>emailAvailable} }"/></VBox>
+<VBox><Link text="{resources>phone}" href="{resources>phoneHref}" visible="{resources>contactAvailable}"/><Text text="TBA" visible="{= !${resources>contactAvailable} }"/></VBox>
+<VBox><Text text="{resources>release}"/><Text text="{resources>allocation}"/></VBox>
+</cells></ColumnListItem></items>
+</Table></VBox></content><endButton><Button text="Close" press=".onCloseResources"/></endButton>
+</Dialog></core:FragmentDefinition>

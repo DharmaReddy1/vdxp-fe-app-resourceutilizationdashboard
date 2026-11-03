@@ -1,0 +1,47 @@
+<mvc:View controllerName="capacity.dashboard.controller.Main" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:u="sap.ui.unified" displayBlock="true">
+<App><Page title="Capacity Dashboard" backgroundDesign="List" busy="{vm>/busy}" busyIndicatorDelay="0"><headerContent><Button text="Excel Template" icon="sap-icon://download" press=".onTemplate"/><Button text="Refresh Sample" icon="sap-icon://refresh" press=".onSample"/></headerContent><content>
+<VBox class="dashboardRoot">
+<HBox wrap="Wrap" justifyContent="SpaceBetween" alignItems="Center" class="intro">
+<VBox><Title text="Daily Capacity Overview" level="H1"/><Text text="R1 support and R2.1 hypercare ? resources, workload and availability."/></VBox>
+<u:FileUploader id="upload" buttonOnly="true" buttonText="Upload Workbook" icon="sap-icon://upload" fileType="xlsx,xls" maximumFileSize="10" sameFilenameAllowed="true" change=".onUpload" fileSizeExceed=".onFileSizeExceed" typeMissmatch=".onTypeMismatch"/>
+</HBox>
+<ObjectStatus text="{vm>/source}" icon="sap-icon://document-text" state="Information" class="sapUiSmallMarginBottom"/>
+<MessageStrip text="Uploads are held in this browser tab. Reload resets to sample data; no shared database is changed." type="Information" showIcon="true" class="sapUiSmallMarginBottom"/>
+<Toolbar height="auto" class="filterToolbar"><content><HBox wrap="Wrap" alignItems="End" class="filterRow">
+<VBox><Label text="Report date" labelFor="date"/><Select id="date" selectedKey="{vm>/filters/date}" items="{vm>/dates}" change=".onFilterChange" width="11rem"><core:Item key="{vm>key}" text="{vm>text}"/></Select></VBox>
+<VBox><Label text="Process area" labelFor="area"/><Select id="area" selectedKey="{vm>/filters/area}" items="{vm>/areas}" change=".onFilterChange" width="16rem"><core:Item key="{vm>key}" text="{vm>text}"/></Select></VBox>
+<VBox><Label text="Capacity status" labelFor="status"/><Select id="status" selectedKey="{vm>/filters/status}" change=".onFilterChange" width="11rem"><core:Item key="" text="All statuses"/><core:Item key="over" text="At Capacity"/><core:Item key="available" text="Available"/></Select></VBox>
+<Button text="Reset Filters" icon="sap-icon://clear-filter" press=".onReset" type="Transparent"/><Text text="{vm>/scope}" class="sapUiTinyMarginBottom"/>
+</HBox></content></Toolbar>
+<l:Grid defaultSpan="XL3 L3 M6 S12" hSpacing="1" vSpacing="1" class="kpiGrid">
+<VBox class="kpiCard"><Text text="Total Resources"/><ObjectNumber number="{vm>/totals/resourcesText}" emphasized="true"/><Text text="Selected process areas" class="kpiHint"/></VBox>
+<VBox class="kpiCard"><Text text="Daily Capacity"/><ObjectNumber number="{vm>/totals/capacityText}" unit="hours"/><Text text="Hours available to allocate" class="kpiHint"/></VBox>
+<VBox class="kpiCard"><Text text="Capacity Used"/><ObjectNumber number="{vm>/totals/usedText}" unit="hours"/><Text text="Imported R1 workload" class="kpiHint"/></VBox>
+<VBox class="kpiCard"><Text text="Available Hours"/><ObjectNumber number="{vm>/totals/availableText}" unit="hours" state="{vm>/totals/availableState}"/><ObjectStatus text="{vm>/totals/utilizationText}" state="{vm>/totals/state}" class="kpiHint"/></VBox>
+</l:Grid>
+<l:Grid defaultSpan="XL8 L8 M12 S12" hSpacing="1" vSpacing="1">
+<Panel headerText="Utilization by Process Area" class="dashboardPanel"><content>
+<List items="{vm>/chart}" showSeparators="Inner" noDataText="No records match the selected filters."><CustomListItem><VBox class="sapUiSmallMargin"><HBox justifyContent="SpaceBetween" wrap="Wrap"><Text text="{vm>area}" wrapping="true"/><ObjectStatus text="{vm>utilizationText}" state="{vm>state}"/></HBox><ProgressIndicator percentValue="{vm>barPercent}" displayValue="{vm>hoursText}" state="{vm>state}" showValue="true" width="100%"/></VBox></CustomListItem></List>
+<Text text="Bars stop at 100%; labels show actual utilization, including overload." class="sapUiSmallMarginTop chartNote"/>
+</content></Panel>
+<Panel headerText="Teams Needing Attention" class="dashboardPanel"><layoutData><l:GridData span="XL4 L4 M12 S12"/></layoutData><content>
+<ObjectNumber number="{vm>/attentionCount}" unit="process areas at capacity" state="Error" class="sapUiSmallMarginBottom"/>
+<List items="{vm>/attention}" noDataText="No teams at capacity in this selection."><StandardListItem title="{vm>area}" description="{vm>excessText}" info="{vm>utilizationText}" infoState="Error"/></List>
+</content></Panel>
+</l:Grid>
+<Panel class="dashboardPanel sapUiSmallMarginTop"><headerToolbar><OverflowToolbar><Title text="Daily Capacity Breakdown" level="H2"/><ToolbarSpacer/><Button text="Export Selection" icon="sap-icon://excel-attachment" press=".onExport" enabled="{= ${vm>/records}.length > 0 }"/></OverflowToolbar></headerToolbar><content>
+<ScrollContainer horizontal="true" vertical="false" width="100%">
+<Table id="capacityTable" width="100%" fixedLayout="false" items="{vm>/records}" noDataText="No matching records. Reset the filters to see all data." class="capacityTable">
+<columns>
+<Column width="15rem"><Text text="Process Area"/></Column><Column hAlign="End"><Text text="Resources"/></Column><Column hAlign="End"><Text text="Daily Capacity (h)"/></Column>
+<Column hAlign="End"><VBox><Text text="R1"/><Text text="Incidents"/></VBox></Column><Column hAlign="End"><VBox><Text text="R1"/><Text text="SRs"/></VBox></Column><Column hAlign="End"><VBox><Text text="R1"/><Text text="OT (CR, ME, PRB)"/></VBox></Column>
+<Column hAlign="End"><VBox><Text text="R2.1 Hypercare"/><Text text="Defects"/></VBox></Column><Column hAlign="End"><Text text="Used (h)"/></Column><Column hAlign="End"><Text text="Available (h)"/></Column><Column hAlign="End"><Text text="Utilization"/></Column><Column><Text text="Status"/></Column>
+</columns><items><ColumnListItem><cells>
+<ObjectIdentifier title="{vm>area}" text="{vm>date}"/><Link text="{vm>resourcesText}" press=".onResourcesPress" tooltip="View module resource contacts"/><Text text="{vm>capacityText}"/><Text text="{vm>incidentsText}"/><Text text="{vm>srsText}"/><Text text="{vm>otText}"/><Text text="{vm>defectsText}"/><Text text="{vm>usedText}"/><ObjectNumber number="{vm>availableText}" state="{vm>availableState}"/><Text text="{vm>utilizationText}"/><ObjectStatus text="{vm>statusText}" state="{vm>state}"/>
+</cells></ColumnListItem></items>
+</Table></ScrollContainer>
+<OverflowToolbar class="sapUiSmallMarginTop"><Title text="Selected Total" level="H3"/><ToolbarSpacer/><ObjectStatus title="Resources" text="{vm>/totals/resourcesText}"/><ToolbarSeparator/><ObjectStatus title="Capacity (h)" text="{vm>/totals/capacityText}"/><ToolbarSeparator/><ObjectStatus title="Used (h)" text="{vm>/totals/usedText}"/><ToolbarSeparator/><ObjectStatus title="Available (h)" text="{vm>/totals/availableText}" state="{vm>/totals/availableState}"/><ToolbarSeparator/><ObjectStatus title="Utilization" text="{vm>/totals/utilizationText}" state="{vm>/totals/state}"/></OverflowToolbar>
+<Text text="Totals are recalculated from filtered rows. Used hours come from the workbook, not estimated ticket effort." class="chartNote sapUiSmallMarginTop"/>
+</content></Panel>
+</VBox></content></Page></App>
+</mvc:View>

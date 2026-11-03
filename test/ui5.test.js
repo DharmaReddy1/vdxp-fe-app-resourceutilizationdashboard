@@ -1,0 +1,10 @@
+import {test} from 'node:test';
+import assert from 'node:assert/strict';
+import vm from 'node:vm';
+import {readFileSync} from 'node:fs';
+import {sample} from '../model.js';
+let capacity;
+vm.runInNewContext(readFileSync(new URL('../webapp/model/capacity.js',import.meta.url),'utf8'),{sap:{ui:{define:(_,factory)=>{capacity=factory();}}}});
+test('UI5 filters update KPI, chart and records consistently',()=>{const all=capacity.build(sample,{});assert.equal(all.records.length,10);assert.equal(all.totals.resources,26);assert.equal(all.totals.capacity,208);const make=capacity.build(sample,{area:'Make'});assert.equal(make.records.length,1);assert.equal(make.totals.capacity,24);assert.equal(make.totals.used,8);assert.equal(make.chart.length,1);});
+test('UI5 overload values remain visible and empty filters avoid invalid percentages',()=>{const r=capacity.build(sample,{area:'Customer Excellence'});assert.ok(r.totals.utilization>700);assert.equal(r.chart[0].barPercent,100);assert.equal(r.chart[0].state,'Error');const empty=capacity.build(sample,{date:'1900-01-01'});assert.equal(empty.totals.utilizationText,'N/A');assert.equal(empty.records.length,0);});
+test('UI5 status filter applies across process areas',()=>{const r=capacity.build(sample,{status:'over'});assert.equal(r.records.length,5);assert.equal(r.attentionCount,5);});
